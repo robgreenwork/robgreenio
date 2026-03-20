@@ -1,12 +1,558 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>robgreen.io â Tech That Works for Fundraisers</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,600;0,700;1,500&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            white:   '#FFFFFF',
+            offwhite:'#F7F7FA',
+            navy:    '#0F1629',
+            navymid: '#1E2A45',
+            pink:    '#F01E70',
+            pinklight:'#FF5FA0',
+            orange:  '#FF6200',
+            orangelight:'#FF8C42',
+            purple:  '#7B5EA7',
+            gray:    '#6B7280',
+            lightgray:'#E8E9EF',
+          },
+          fontFamily: {
+            sans:  ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            serif: ['Lora', 'Georgia', 'serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background-color: #FFFFFF; color: #0F1629; }
+    input, textarea { outline: none; }
+    input::placeholder, textarea::placeholder { color: #6B7280; opacity: 0.7; }
+
+    /* Gradient text utility */
+    .grad-text {
+      background: linear-gradient(135deg, #F01E70 0%, #FF6200 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Animated underline on nav links */
+    .nav-link {
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: -2px;
+      width: 0; height: 2px;
+      background: linear-gradient(90deg, #F01E70, #FF6200);
+      transition: width 0.2s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+
+    /* Tag pills */
+    .tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+  </style>
 </head>
-<body>
-    <h1>Hello, World!</h1>
-    <p>This page is under construction.</p>
+
+<body class="font-sans antialiased">
+
+  <!-- âââ NAV âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ -->
+  <nav class="px-6 md:px-14 py-5 flex items-center justify-between border-b border-lightgray/60 sticky top-0 bg-white/95 backdrop-blur-sm z-50">
+
+    <!-- Brand name -->
+    <a href="#" class="flex items-baseline gap-0.5">
+      <span class="font-sans font-800 text-xl font-extrabold text-navy tracking-tight">robgreen</span>
+      <span class="grad-text font-extrabold text-xl">.io</span>
+    </a>
+
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium text-navymid">
+      <a href="#about"   class="nav-link hover:text-navy transition-colors duration-150">About</a>
+      <a href="#help"    class="nav-link hover:text-navy transition-colors duration-150">How I Help</a>
+      <a href="#newsletter" class="nav-link hover:text-navy transition-colors duration-150">Newsletter</a>
+      <a href="#contact" class="nav-link hover:text-navy transition-colors duration-150">Contact</a>
+    </div>
+
+    <div class="hidden md:flex items-center gap-2">
+      <input type="email" placeholder="your@email.com"
+        class="w-44 px-4 py-2 rounded-full border border-lightgray text-sm text-navy bg-offwhite focus:border-pink transition-colors" />
+      <button class="text-white text-sm font-semibold px-5 py-2 rounded-full transition-opacity hover:opacity-90"
+        style="background: linear-gradient(135deg, #F01E70, #FF6200);">
+        Sign Up
+      </button>
+    </div>
+  </nav>
+
+  <!-- âââ HERO ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ -->
+  <section class="px-6 md:px-14 pt-16 pb-10 relative overflow-hidden">
+
+    <!-- Background blob top-right -->
+    <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full opacity-[0.06] pointer-events-none"
+      style="background: radial-gradient(circle, #F01E70 0%, #FF6200 100%);"></div>
+
+    <!-- Tech tags floating top right -->
+    <div class="absolute top-8 right-6 md:right-14 hidden md:flex flex-col gap-2 items-end pointer-events-none select-none">
+      <span class="tag bg-pink/10 text-pink">AI &amp; Automation</span>
+      <span class="tag bg-orange/10 text-orange">Fundraising Platforms</span>
+      <span class="tag bg-purple/10 text-purple">Data &amp; Analytics</span>
+      <span class="tag" style="background:#FFF0E5; color:#FF6200;">Marketing Tech</span>
+    </div>
+
+    <!-- Doodle squiggle -->
+    <div class="absolute left-2 top-12 opacity-40 pointer-events-none">
+      <svg width="70" height="28" viewBox="0 0 70 28" fill="none">
+        <path d="M3 14 Q12 3 21 14 Q30 25 39 14 Q48 3 57 14 Q63 20 68 16"
+          stroke="#F01E70" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+
+    <div class="max-w-4xl mt-4">
+      <!-- Eyebrow -->
+      <p class="text-sm font-semibold tracking-widest uppercase text-pink mb-5">
+        For fundraisers who want more from tech
+      </p>
+
+      <h1 class="font-sans font-extrabold text-5xl md:text-7xl leading-[1.05] text-navy mb-4">
+        Fundraisers are<br/>powerful.
+      </h1>
+      <h2 class="font-serif italic text-4xl md:text-6xl leading-[1.1] mb-8" style="color: #F01E70;">
+        The right tech makes<br/>you unstoppable.
+      </h2>
+
+      <p class="text-lg md:text-xl text-gray leading-relaxed max-w-2xl mb-10">
+        I help fundraising teams get more out of their technology â whether that's AI,
+        your CRM, data tools, marketing platforms, or the dozens of other things
+        pulling at your attention.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <a href="#contact"
+          class="inline-flex items-center justify-center px-7 py-4 rounded-full text-white font-semibold text-sm hover:opacity-90 transition-opacity"
+          style="background: linear-gradient(135deg, #F01E70, #FF6200);">
+          Let's talk â
+        </a>
+        <a href="#newsletter"
+          class="inline-flex items-center justify-center px-7 py-4 rounded-full text-navy font-semibold text-sm border-2 border-lightgray hover:border-pink transition-colors">
+          Read the newsletter
+        </a>
+      </div>
+    </div>
+
+    <!-- Doodle orange wave bottom -->
+    <div class="absolute bottom-4 right-14 opacity-30 pointer-events-none">
+      <svg width="120" height="45" viewBox="0 0 120 45" fill="none">
+        <path d="M4 30 Q20 8 36 24 Q52 40 68 22 Q84 4 100 18 Q112 28 118 22"
+          stroke="#FF6200" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M4 38 Q20 20 36 34 Q50 46 64 32"
+          stroke="#FF6200" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- âââ ABOUT âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ -->
+  <section id="about" class="bg-offwhite px-6 md:px-14 py-16 relative overflow-hidden">
+
+    <!-- Background blob -->
+    <div class="absolute -bottom-16 -left-16 w-64 h-64 rounded-full opacity-[0.05] pointer-events-none"
+      style="background: #F01E70;"></div>
+
+    <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-14 items-center">
+
+      <!-- Photo -->
+      <div class="relative">
+        <div class="rounded-3xl overflow-hidden relative aspect-[4/3]">
+          <!-- Swap this src for rob-photo.jpg once you have the file -->
+          <img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?w=700&h=525&fit=crop&crop=faces"
+            alt="Rob Green"
+            class="w-full h-full object-cover object-top" />
+        </div>
+
+        <!-- Floating brand badge -->
+        <div class="absolute -bottom-4 -right-4 bg-white rounded-2xl shadow-lg px-5 py-3 flex items-center gap-2">
+          <span class="font-extrabold text-navy text-sm">robgreen</span>
+          <span class="grad-text font-extrabold text-sm">.io</span>
+        </div>
+
+        <!-- Pink doodle curl -->
+        <div class="absolute -top-5 -left-5 opacity-70 pointer-events-none">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <path d="M50 6 Q58 26 42 40 Q28 52 10 46 Q2 42 4 33"
+              stroke="#F01E70" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M4 33 L1 25 M4 33 L12 29"
+              stroke="#F01E70" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Copy -->
+      <div>
+        <p class="text-sm font-semibold tracking-widest uppercase text-pink mb-3">About Rob</p>
+        <h3 class="font-sans font-extrabold text-3xl md:text-4xl text-navy mb-5 leading-tight">
+          Hi, I'm Rob.<br/>I'm on your side.
+        </h3>
+        <p class="text-gray leading-relaxed mb-4">
+          I've spent my career at the crossroads of fundraising and technology. I know
+          what it feels like to sit in a fundraising team, surrounded by platforms you're
+          paying for but not getting the most out of â and I know how overwhelming it
+          can be when someone tells you "just use AI" without any real guidance.
+        </p>
+        <p class="text-gray leading-relaxed mb-6">
+          My job is to cut through that. Whether it's your CRM, your data strategy,
+          AI tools, marketing automation, or the next shiny thing promising to
+          revolutionise fundraising â I help you figure out what's actually worth your
+          time, and how to make it work.
+        </p>
+
+        <!-- Tech area tags -->
+        <div class="flex flex-wrap gap-2 mb-8">
+          <span class="tag bg-pink/10 text-pink">AI &amp; Automation</span>
+          <span class="tag bg-orange/10 text-orange">CRMs &amp; Platforms</span>
+          <span class="tag bg-purple/10 text-purple">Data &amp; Analytics</span>
+          <span class="tag" style="background:#FFF0E5; color:#FF6200;">Marketing Tech</span>
+          <span class="tag bg-navy/10 text-navy">Digital Strategy</span>
+        </div>
+
+        <!-- Newsletter inline -->
+        <p class="font-semibold text-navy mb-3">Get one useful insight every week â</p>
+        <div class="flex gap-2">
+          <input type="email" placeholder="your@email.com"
+            class="flex-1 px-5 py-3 rounded-full border border-lightgray bg-white text-sm text-navy focus:border-pink transition-colors"/>
+          <button class="text-white px-6 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
+            style="background: linear-gradient(135deg, #F01E70, #FF6200);">
+            Subscribe
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- âââ MIDDLE STATEMENT ââââââââââââââââââââââââââââââââââââââââââââââââ -->
+  <section class="px-6 md:px-14 py-16 relative">
+
+    <!-- Doodles -->
+    <div class="absolute left-8 top-8 opacity-50 pointer-events-none">
+      <svg width="80" height="55" viewBox="0 0 80 55" fill="none">
+        <path d="M4 28 C14 8 32 4 42 18 C52 32 70 26 76 12"
+          stroke="#7B5EA7" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M4 44 C14 28 26 24 36 36 C46 48 62 42 72 32"
+          stroke="#F01E70" stroke-width="2" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <div class="absolute right-8 bottom-8 opacity-45 pointer-events-none">
+      <svg width="80" height="40" viewBox="0 0 80 40" fill="none">
+        <path d="M4 20 Q20 4 36 20 Q52 36 68 20 Q75 12 78 16"
+          stroke="#FF6200" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+
+    <div class="max-w-3xl mx-auto text-center">
+      <p class="font-sans font-extrabold text-3xl md:text-4xl text-navy leading-tight mb-5">
+        Technology should make fundraising<br/>
+        <span class="grad-text">faster, smarter, and more human.</span>
+      </p>
+      <p class="text-gray text-lg leading-relaxed mb-4">
+        Too often it does the opposite. The platforms are clunky. The data is a mess.
+        The AI tools feel like someone else built them for someone else's job.
+      </p>
+      <p class="font-semibold text-navy text-lg">
+        I help fix that â for the people doing the fundraising.
+      </p>
+    </div>
+  </section>
+
+  <!-- âââ HOW I HELP ââââââââââââââââââââââââââââââââââââââââââââââââââââââ -->
+  <section id="help" class="bg-navy px-6 md:px-14 py-16 relative overflow-hidden">
+
+    <!-- Background blobs -->
+    <div class="absolute top-0 right-0 w-80 h-80 rounded-full opacity-[0.06] pointer-events-none"
+      style="background: #F01E70;"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-[0.05] pointer-events-none"
+      style="background: #FF6200;"></div>
+
+    <div class="max-w-5xl mx-auto">
+      <p class="text-sm font-semibold tracking-widest uppercase text-pink mb-3">What I do</p>
+      <h2 class="font-sans font-extrabold text-4xl md:text-5xl text-white mb-12 leading-tight">
+        Three ways I help<br/>fundraisers win with tech
+      </h2>
+
+      <div class="grid md:grid-cols-3 gap-6">
+
+        <!-- Card 1 -->
+        <div class="bg-white/5 border border-white/10 rounded-3xl p-7 hover:bg-white/8 transition-colors">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
+            style="background: linear-gradient(135deg, #F01E70, #FF6200);">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <path d="M11 2L13.5 8H20L14.5 12L16.5 18L11 14.5L5.5 18L7.5 12L2 8H8.5L11 2Z"
+                fill="white" stroke="white" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="font-sans font-bold text-xl text-white mb-3">Strategy &amp; Consulting</h3>
+          <p class="text-white/60 leading-relaxed text-sm">
+            Helping your team build a clear technology strategy â covering AI, CRM,
+            data, and martech. Not jargon-heavy reports â honest, actionable advice
+            that fits your organisation and your budget.
+          </p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-white/5 border border-white/10 rounded-3xl p-7 hover:bg-white/8 transition-colors">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
+            style="background: linear-gradient(135deg, #FF6200, #FF8C42);">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <rect x="2" y="3" width="18" height="13" rx="2" stroke="white" stroke-width="2"/>
+              <path d="M7 19H15M11 16V19" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="font-sans font-bold text-xl text-white mb-3">Workshops &amp; Training</h3>
+          <p class="text-white/60 leading-relaxed text-sm">
+            Practical, hands-on workshops covering the full tech landscape â AI tools,
+            fundraising platforms, data skills, and marketing automation. Real tools,
+            real scenarios, real outcomes for real fundraisers.
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bg-white/5 border border-white/10 rounded-3xl p-7 hover:bg-white/8 transition-colors">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
+            style="background: linear-gradient(135deg, #7B5EA7, #F01E70);">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <path d="M4 4H18V14H4V4Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M4 18H12M16 18H18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <path d="M8 8H14M8 11H11" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="font-sans font-bold text-xl text-white mb-3">Newsletter &amp; Resources</h3>
+          <p class="text-white/60 leading-relaxed text-sm">
+            Every week, one clear insight on tech for fundraisers. Plus a growing
+            library of frameworks, guides, and tools you can actually use.
+            Ideas that compound over time.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Tech areas -->
+      <div class="mt-10 pt-10 border-t border-white/10">
+        <p class="text-white/40 text-xs font-semibold tracking-widest uppercase mb-4">
+          Topics I cover
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="tag bg-pink/20 text-pinklight">AI &amp; Automation</span>
+          <span class="tag" style="background:rgba(255,98,0,0.2); color:#FF8C42;">CRM &amp; Donor Platforms</span>
+          <span class="tag bg-purple/20 text-purple" style="color:#A08FCC;">Data &amp; Analytics</span>
+          <span class="tag" style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.6);">Email Marketing</span>
+          <span class="tag" style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.6);">Digital Fundraising</span>
+          <span class="tag" style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.6);">Marketing Automation</span>
+          <span class="tag" style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.6);">Fundraising Strategy</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- âââ NEWSLETTER CTA ââââââââââââââââââââââââââââââââââââââââââââââââââ -->
+  <section id="newsletter" class="px-6 md:px-14 py-20 relative overflow-hidden">
+
+    <!-- Background gradient blob -->
+    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 60% 50%, rgba(240,30,112,0.04) 0%, transparent 70%);"></div>
+
+    <!-- Doodles -->
+    <div class="absolute left-6 bottom-10 opacity-50 pointer-events-none">
+      <svg width="90" height="40" viewBox="0 0 90 40" fill="none">
+        <path d="M4 20 Q16 4 28 16 Q40 28 52 14 Q64 0 76 10 Q83 17 88 14"
+          stroke="#7B5EA7" stroke-width="2.5" stroke-linecap"round" fill="none"/>
+      </svg>
+    </div>
+    <div class="absolute right-10 top-8 opacity-50 pointer-events-none">
+      <svg width="65" height="62" viewBox="0 0 65 62" fill="none">
+        <path d="M55 8 Q62 26 46 38 Q32 48 12 46"
+          stroke="#F01E70" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M12 46 L18 38 M12 46 L20 50"
+          stroke="#F01E70" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M55 8 Q53 2 57 3 Q62 5 58 9"
+          stroke="#F01E70" stroke-width="2" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+
+    <div class="max-w-2xl mx-auto text-center relative z-10">
+      <p class="text-sm font-semibold tracking-widest uppercase text-pink mb-4">The newsletter</p>
+      <h2 class="font-sans font-extrabold text-4xl md:text-5xl text-navy leading-tight mb-4">
+        One useful thing.<br/>
+        <span class="grad-text">Every week.</span>
+      </h2>
+      <p class="text-gray text-lg leading-relaxed mb-10">
+        Each week I share one insight, tool, or framework that helps fundraisers
+        get more from their technology. No hype. No jargon.
+        Just clear thinking for people doing real work.
+      </p>
+
+      <div class="flex gap-2 max-w-md mx-auto">
+        <input type="email" placeholder="your@email.com"
+          class="flex-1 px-5 py-4 rounded-full border border-lightgray bg-offwhite text-sm text-navy focus:border-pink transition-colors"/>
+        <button class="text-white px-7 py-4 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
+          style="background: linear-gradient(135deg, #F01E70, #FF6200);">
+          Subscribe
+        </button>
+      </div>
+
+      <!-- Arrow doodle -->
+      <div class="flex justify-end max-w-md mx-auto mt-2 pr-3">
+        <svg width="52" height="46" viewBox="0 0 52 46" fill="none">
+          <path d="M44 6 Q50 22 35 32 Q22 40 6 40"
+            stroke="#FF6200" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M6 40 L11 33 M6 40 L13 43"
+            stroke="#FF6200" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M44 6 Q42 1 46 2 Q50 4 47 8"
+            stroke="#FF6200" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- âââ CONTACT âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ -->
+  <section id="contact" class="bg-offwhite px-6 md:px-14 py-16 relative overflow-hidden">
+
+    <div class="absolute -bottom-10 -right-10 w-64 h-64 rounded-full opacity-[0.06] pointer-events-none"
+      style="background: #FF6200;"></div>
+
+    <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-14 items-start">
+
+      <div>
+        <p class="text-sm font-semibold tracking-widest uppercase text-pink mb-3">Get in touch</p>
+        <h2 class="font-sans font-extrabold text-4xl text-navy mb-4 leading-tight">
+          Want to work<br/>together?
+        </h2>
+        <p class="text-gray leading-relaxed mb-3">
+          Whether you're thinking about a technology audit, a workshop for your team,
+          or just want to talk through where to start â I'd love to hear from you.
+        </p>
+        <p class="text-gray leading-relaxed mb-8">
+          No sales pitch. Just a proper conversation.
+        </p>
+
+        <!-- Contact methods -->
+        <div class="space-y-3">
+          <a href="mailto:robgreen.work@gmail.com"
+            class="flex items-center gap-3 text-sm font-medium text-navymid hover:text-pink transition-colors">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+             style="background: linear-gradient(135deg, #F01E70, #FF6200);">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect x="1" y="3" width="14" height="10" rx="1.5" stroke="white" stroke-width="1.5"/>
+                <path d="M1 5L8 9L15 5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            robgreen.work@gmail.com
+          </a>
+          <a href="https://linkedin.com/in/robgreen" target="_blank"
+            class="flex items-center gap-3 text-sm font-medium text-navymid hover:text-pink transition-colors">
+            <div class="w-9 h-9 rounded-xl bg-navy flex items-center justify-center flex-shrink-0">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <rect x="1" y="1" width="12" height="12" rx="2" stroke="white" stroke-width="1.5"/>
+                <path d="M4 6V10M4 4.5V4.6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M7 10V7.5C7 6.7 7.6 6 8.4 6C9.2 6 10 6.7 10 7.5V10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            LinkedIn
+          </a>
+        </div>
+      </div>
+
+      <form class="bg-white rounded-3xl p-8 shadow-sm border border-lightgray/60 space-y-5">
+        <div>
+          <label class="block text-xs font-semibold text-navy/50 uppercase tracking-wider mb-1.5">Name</label>
+          <input type="text" placeholder="Your name"
+            class="w-full px-4 py-3 rounded-xl border border-lightgray bg-offwhite text-navy text-sm focus:border-pink transition-colors"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-navy/50 uppercase tracking-wider mb-1.5">Email</label>
+          <input type="email" placeholder="your@email.com"
+            class="w-full px-4 py-3 rounded-xl border border-lightgray bg-offwhite text-navy text-sm focus:border-pink transition-colors"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-navy/50 uppercase tracking-wider mb-1.5">Organisation</label>
+          <input type="text" placeholder="Where you work"
+            class="w-full px-4 py-3 rounded-xl border border-lightgray bg-offwhite text-navy text-sm focus:border-pink transition-colors"/>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-navy/50 uppercase tracking-wider mb-1.5">What's on your mind?</label>
+          <textarea rows="4" placeholder="Tell me what you're working on, or just say hi."
+            class="w-full px-4 py-3 rounded-xl border border-lightgray bg-offwhite text-navy text-sm focus:border-pink transition-colors resize-none"></textarea>
+        </div>
+        <button type="submit"
+          class="w-full text-white py-4 rounded-full font-semibold text-sm hover:opacity-90 transition-opacity"
+          style="background: linear-gradient(135deg, #F01E70, #FF6200);">
+          Send message
+        </button>
+      </form>
+
+    </div>
+  </section>
+
+  <!-- âââ FOOTER ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ -->
+  <footer class="bg-navy px-6 md:px-14 pt-14 pb-8 relative overflow-hidden">
+
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full opacity-[0.04] pointer-events-none"
+      style="background: #F01E70;"></div>
+
+    <div class="max-w-6xl mx-auto relative z-10">
+      <div class="grid md:grid-cols-2 gap-12 mb-14">
+
+        <nav class="space-y-1">
+          <a href="#"           class="block font-bold text-2xl text-white/80 hover:text-pink transition-colors duration-150">Home</a>
+          <a href="#about"      class="block font-bold text-2xl text-white/80 hover:text-pink transition-colors duration-150">About</a>
+          <a href="#help"       class="block font-bold text-2xl text-white/80 hover:text-pink transition-colors duration-150">How I Help</a>
+          <a href="#newsletter" class="block font-bold text-2xl text-white/80 hover:text-pink transition-colors duration-150">Newsletter</a>
+          <a href="#contact"    class="block font-bold text-2xl text-white/80 hover:text-pink transition-colors duration-150">Contact</a>
+        </nav>
+
+        <div>
+          <p class="font-bold text-xl text-white/90 mb-1">Get ideas in your inbox.</p>
+          <p class="text-white/40 text-sm mb-4">Tech for fundraisers, every week.</p>
+          <div class="flex gap-2">
+            <input type="email" placeholder="your@email.com"
+              class="flex-1 px-4 py-3 rounded-full bg-white/8 border border-white/10 text-white text-sm focus:border-pink transition-colors"
+              style="background: rgba(255,255,255,0.06);"/>
+            <button class="text-white px-6 py-3 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
+              style="background: linear-gradient(135deg, #F01E70, #FF6200);">
+              Subscribe
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Big brand name -->
+      <div class="border-t border-white/8 pt-8" style="border-color: rgba(255,255,255,0.08)">
+        <div class="flex items-baseline gap-1 mb-6">
+          <span class="font-extrabold text-7xl md:text-[110px] text-white/80 leading-none tracking-tight">robgreen</span>
+          <span class="font-extrabold text-7xl md:text-[110px] leading-none grad-text">.io</span>
+        </div>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-white/30 text-sm">
+          <p>Â© robgreen.io 2026</p>
+          <div class="flex gap-6">
+            <a href="https://linkedin.com/in/robgreen" target="_blank" class="hover:text-white transition-colors">LinkedIn</a>
+            <a href="mailto:robgreen.work@gmail.com" class="hover:text-white transition-colors">Email</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
 </body>
 </html>
