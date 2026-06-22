@@ -14,35 +14,18 @@
       font-family: Arial, sans-serif;
     }
 
-    canvas {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-    }
-
     .scene {
       position: fixed;
       inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      gap: 0.4em;
-    }
-
-    .dot {
-      width: 0.55em;
-      height: 0.55em;
-      border-radius: 50%;
-      background: #fff;
-      font-size: min(8vw, 14vh);
-      animation: pulse 4s ease-in-out infinite;
     }
 
     h1 {
       font-size: min(8vw, 14vh);
       font-weight: 400;
-      color: #fff;
+      color: rgba(255,255,255,0.9);
       letter-spacing: 0.05em;
       text-transform: uppercase;
       position: relative;
@@ -50,8 +33,7 @@
       user-select: none;
     }
 
-    h1::before,
-    h1::after {
+    h1::before, h1::after {
       content: attr(data-text);
       position: absolute;
       inset: 0;
@@ -86,63 +68,78 @@
       96% { transform: translate(0); opacity: 0; }
     }
 
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.3); opacity: 0.6; }
-    }
-
-    /* Spotlight overlay */
-    .spotlight {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(circle 300px at 50% 50%, transparent 0%, rgba(72,77,75,0.6) 100%);
-      transition: background 0.05s;
-    }
-
-    /* Scanlines */
     .scanlines {
       position: fixed;
       inset: 0;
       pointer-events: none;
+      z-index: 10;
       background: repeating-linear-gradient(
         0deg,
         transparent,
         transparent 2px,
-        rgba(0,0,0,0.07) 2px,
-        rgba(0,0,0,0.07) 4px
+        rgba(0,0,0,0.06) 2px,
+        rgba(0,0,0,0.06) 4px
       );
     }
 
-    /* Grain */
     .grain {
       position: fixed;
       inset: -50%;
       width: 200%;
       height: 200%;
       pointer-events: none;
-      opacity: 0.08;
+      z-index: 9;
+      opacity: 0.07;
       animation: grain 0.5s steps(1) infinite;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
       background-size: 256px 256px;
     }
 
     @keyframes grain {
-      0%  { transform: translate(0, 0); }
-      10% { transform: translate(-2%, -3%); }
-      20% { transform: translate(3%, 2%); }
-      30% { transform: translate(-1%, 4%); }
-      40% { transform: translate(4%, -1%); }
-      50% { transform: translate(-3%, 3%); }
-      60% { transform: translate(2%, -4%); }
-      70% { transform: translate(-4%, 1%); }
-      80% { transform: translate(1%, -2%); }
-      90% { transform: translate(-2%, 4%); }
-      100%{ transform: translate(3%, -3%); }
+      0%   { transform: translate(0,0); }
+      10%  { transform: translate(-2%,-3%); }
+      20%  { transform: translate(3%,2%); }
+      30%  { transform: translate(-1%,4%); }
+      40%  { transform: translate(4%,-1%); }
+      50%  { transform: translate(-3%,3%); }
+      60%  { transform: translate(2%,-4%); }
+      70%  { transform: translate(-4%,1%); }
+      80%  { transform: translate(1%,-2%); }
+      90%  { transform: translate(-2%,4%); }
+      100% { transform: translate(3%,-3%); }
     }
 
-    /* Scramble chars */
-    .char { display: inline-block; transition: color 0.1s; }
+    canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* Score display */
+    #score {
+      position: fixed;
+      top: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 11;
+      color: rgba(255,255,255,0.3);
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      opacity: 0;
+      transition: opacity 1s;
+    }
+
+    #score.visible { opacity: 1; }
+
+    /* Spotlight */
+    .spotlight {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 8;
+    }
   </style>
 </head>
 <body>
@@ -151,15 +148,20 @@
   <div class="spotlight" id="spotlight"></div>
 
   <div class="scene">
-    <div class="dot" id="dot"></div>
     <h1 id="title" data-text="ROBGREEN.IO"><span id="text-inner"></span></h1>
   </div>
 
+  <div id="score"></div>
+  <canvas id="c"></canvas>
+
   <script>
     const ORIGINAL = 'ROBGREEN.IO';
-    const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&';
-    const inner = document.getElementById('text-inner');
-    const h1 = document.getElementById('title');
+    const CHARS    = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&';
+    const inner    = document.getElementById('text-inner');
+    const h1       = document.getElementById('title');
+    const score    = document.getElementById('score');
+    const canvas   = document.getElementById('c');
+    const ctx      = canvas.getContext('2d');
     const spotlight = document.getElementById('spotlight');
 
     // Build char spans
@@ -171,53 +173,263 @@
       return s;
     });
 
-    // Scramble effect
+    // Index of 'I' in ROBGREEN.IO = 9
+    const iSpan = spans[9];
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // ── Scramble ────────────────────────────────────────────
     function scramble() {
-      let iterations = 0;
-      const total = 18;
-      const interval = setInterval(() => {
+      let iter = 0, total = 18;
+      const iv = setInterval(() => {
         spans.forEach((s, i) => {
-          if (i < iterations / 2) {
-            s.textContent = ORIGINAL[i];
-            s.style.color = '';
-          } else {
-            s.textContent = CHARS[Math.floor(Math.random() * CHARS.length)];
-            s.style.color = `hsl(${Math.random()*360},80%,80%)`;
-          }
+          if (i < iter / 2) { s.textContent = ORIGINAL[i]; s.style.color = ''; }
+          else { s.textContent = CHARS[Math.floor(Math.random()*CHARS.length)]; s.style.color = `hsl(${Math.random()*360},80%,80%)`; }
         });
-        iterations++;
-        if (iterations > total * 2) {
-          clearInterval(interval);
-          spans.forEach((s, i) => {
-            s.textContent = ORIGINAL[i];
-            s.style.color = '';
-          });
+        iter++;
+        if (iter > total*2) {
+          clearInterval(iv);
+          spans.forEach((s,i) => { s.textContent = ORIGINAL[i]; s.style.color = ''; });
         }
       }, 40);
     }
 
-    // Run on load, then randomly
     scramble();
-    setInterval(scramble, 5000 + Math.random() * 3000);
-    setInterval(scramble, 8000 + Math.random() * 5000);
+    setInterval(scramble, 5000 + Math.random()*3000);
 
-    // Hover scramble
-    h1.addEventListener('mouseenter', scramble);
-
-    // Spotlight follow
-    document.addEventListener('mousemove', e => {
-      spotlight.style.background = `radial-gradient(circle 350px at ${e.clientX}px ${e.clientY}px, transparent 0%, rgba(40,44,42,0.75) 100%)`;
-    });
-
-    // Background color slow shift
+    // ── Background breathe ──────────────────────────────────
     let hue = 0;
     function shiftBg() {
-      hue += 0.03;
-      const l = 28 + Math.sin(hue * 0.5) * 4;
-      document.body.style.background = `hsl(${148 + Math.sin(hue)*6}, ${7 + Math.sin(hue*0.7)*2}%, ${l}%)`;
+      hue += 0.02;
+      const l = 28 + Math.sin(hue*0.5)*4;
+      document.body.style.background = `hsl(${148+Math.sin(hue)*6},${7+Math.sin(hue*0.7)*2}%,${l}%)`;
       requestAnimationFrame(shiftBg);
     }
     shiftBg();
+
+    // ── Spotlight ────────────────────────────────────────────
+    document.addEventListener('mousemove', e => {
+      spotlight.style.background = `radial-gradient(circle 350px at ${e.clientX}px ${e.clientY}px, transparent 0%, rgba(40,44,42,0.7) 100%)`;
+    });
+
+    // ── PONG ─────────────────────────────────────────────────
+    const PADDLE_W = 10, PADDLE_H = 80, PAD_MARGIN = 48;
+    const BALL_R   = 8;
+    const SPEED_INIT = 5, SPEED_MAX = 14;
+
+    let state   = 'intro'; // intro → launch → playing
+    let ball    = { x:0, y:0, vx:0, vy:0 };
+    let padL    = { y:0 }, padR = { y:0 };
+    let sL = 0, sR = 0;
+    let introT  = 0;
+    let introStart;
+    let dotStart; // where the dot begins (above the I)
+    let dotTarget;// center of screen
+
+    function getDotOrigin() {
+      const r   = iSpan.getBoundingClientRect();
+      const cx  = r.left + r.width / 2;
+      const cy  = r.top - r.height * 0.7;
+      return { x: cx, y: cy };
+    }
+
+    function launchBall() {
+      ball.x  = canvas.width / 2;
+      ball.y  = canvas.height / 2;
+      const angle = (Math.random() * 60 - 30) * Math.PI / 180;
+      const dir   = Math.random() < 0.5 ? 1 : -1;
+      ball.vx = dir * SPEED_INIT * Math.cos(angle);
+      ball.vy = SPEED_INIT * Math.sin(angle);
+    }
+
+    function aiPaddle(pad, targetY) {
+      const speed = 4.5;
+      const center = pad.y + PADDLE_H / 2;
+      if (center < targetY - 4) pad.y += speed;
+      if (center > targetY + 4) pad.y -= speed;
+      pad.y = Math.max(0, Math.min(canvas.height - PADDLE_H, pad.y));
+    }
+
+    function resetBall(scorer) {
+      scorer === 'L' ? sL++ : sR++;
+      score.textContent = `${sL}  ·  ${sR}`;
+      scramble();
+      setTimeout(launchBall, 800);
+      ball.vx = 0; ball.vy = 0;
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+    }
+
+    function drawDot(x, y, r, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI*2);
+      ctx.fillStyle = '#fff';
+      ctx.shadowColor = '#fff';
+      ctx.shadowBlur = 16;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawPaddle(x, y, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = '#fff';
+      ctx.shadowColor = '#fff';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.roundRect(x, y, PADDLE_W, PADDLE_H, 5);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Centre line dashes
+    function drawCentreLine(alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha * 0.15;
+      ctx.setLineDash([12, 18]);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(canvas.width/2, 0);
+      ctx.lineTo(canvas.width/2, canvas.height);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    let gameAlpha = 0; // fades in when playing starts
+    let introAnim = null;
+
+    function startIntro() {
+      introStart  = performance.now();
+      dotStart    = getDotOrigin();
+      padL.y      = (canvas.height - PADDLE_H) / 2;
+      padR.y      = (canvas.height - PADDLE_H) / 2;
+      state       = 'intro';
+    }
+
+    // Draw the "dot above the I" in CSS-space for the intro phase
+    function drawIntroDot(progress) {
+      const target = { x: canvas.width/2, y: canvas.height/2 };
+      const o      = dotStart;
+      // ease in-out cubic
+      const t = progress < 0.5 ? 4*progress*progress*progress : 1 - Math.pow(-2*progress+2,3)/2;
+      const x = o.x + (target.x - o.x) * t;
+      const y = o.y + (target.y - o.y) * t;
+      drawDot(x, y, BALL_R, 1);
+    }
+
+    const INTRO_DUR  = 1800; // ms to float dot to centre
+    const LAUNCH_DELAY = 400;
+
+    function loop(now) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (state === 'idle') {
+        // just draw the dot above the I
+        const o = getDotOrigin();
+        drawDot(o.x, o.y, BALL_R, 1);
+
+      } else if (state === 'intro') {
+        const elapsed  = now - introStart;
+        const progress = Math.min(elapsed / INTRO_DUR, 1);
+
+        drawCentreLine(progress * gameAlpha);
+        drawIntroDot(progress);
+
+        // Paddles fade and slide in
+        const pAlpha = Math.max(0, (progress - 0.4) / 0.6);
+        gameAlpha = pAlpha;
+        if (pAlpha > 0) {
+          drawPaddle(PAD_MARGIN - PADDLE_W - (1-pAlpha)*60, padL.y, pAlpha);
+          drawPaddle(canvas.width - PAD_MARGIN + (1-pAlpha)*60, padR.y, pAlpha);
+        }
+
+        if (progress >= 1) {
+          score.classList.add('visible');
+          score.textContent = `${sL}  ·  ${sR}`;
+          gameAlpha = 1;
+          state = 'launching';
+          setTimeout(() => {
+            launchBall();
+            state = 'playing';
+          }, LAUNCH_DELAY);
+        }
+
+      } else if (state === 'launching') {
+        drawCentreLine(1);
+        drawDot(canvas.width/2, canvas.height/2, BALL_R, 1);
+        drawPaddle(PAD_MARGIN - PADDLE_W, padL.y, 1);
+        drawPaddle(canvas.width - PAD_MARGIN, padR.y, 1);
+
+      } else if (state === 'playing') {
+        // Move ball
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+        // Top/bottom bounce
+        if (ball.y - BALL_R <= 0)                    { ball.y = BALL_R;                ball.vy *= -1; }
+        if (ball.y + BALL_R >= canvas.height)         { ball.y = canvas.height - BALL_R; ball.vy *= -1; }
+
+        // Paddle collisions
+        const lx = PAD_MARGIN - PADDLE_W;
+        const rx = canvas.width - PAD_MARGIN;
+
+        // Left paddle
+        if (ball.vx < 0 &&
+            ball.x - BALL_R <= lx + PADDLE_W &&
+            ball.x - BALL_R >= lx &&
+            ball.y >= padL.y && ball.y <= padL.y + PADDLE_H) {
+          ball.x = lx + PADDLE_W + BALL_R;
+          const rel  = (ball.y - (padL.y + PADDLE_H/2)) / (PADDLE_H/2);
+          const spd  = Math.min(Math.hypot(ball.vx, ball.vy) * 1.05, SPEED_MAX);
+          const ang  = rel * 60 * Math.PI / 180;
+          ball.vx    = spd * Math.cos(ang);
+          ball.vy    = spd * Math.sin(ang);
+        }
+
+        // Right paddle
+        if (ball.vx > 0 &&
+            ball.x + BALL_R >= rx &&
+            ball.x + BALL_R <= rx + PADDLE_W &&
+            ball.y >= padR.y && ball.y <= padR.y + PADDLE_H) {
+          ball.x = rx - BALL_R;
+          const rel  = (ball.y - (padR.y + PADDLE_H/2)) / (PADDLE_H/2);
+          const spd  = Math.min(Math.hypot(ball.vx, ball.vy) * 1.05, SPEED_MAX);
+          const ang  = rel * 60 * Math.PI / 180;
+          ball.vx    = -spd * Math.cos(ang);
+          ball.vy    =  spd * Math.sin(ang);
+        }
+
+        // Score
+        if (ball.x < 0)              resetBall('R');
+        if (ball.x > canvas.width)   resetBall('L');
+
+        // AI
+        aiPaddle(padL, ball.vy > 0 || ball.vx < 0 ? ball.y : canvas.height/2);
+        aiPaddle(padR, ball.vy > 0 || ball.vx > 0 ? ball.y : canvas.height/2);
+
+        drawCentreLine(1);
+        drawPaddle(lx, padL.y, 1);
+        drawPaddle(rx, padR.y, 1);
+        drawDot(ball.x, ball.y, BALL_R, 1);
+      }
+
+      requestAnimationFrame(loop);
+    }
+
+    // ── Start ────────────────────────────────────────────────
+    // Show static dot for a moment, then begin intro
+    state = 'idle';
+    requestAnimationFrame(loop);
+
+    setTimeout(() => startIntro(), 1800);
   </script>
 </body>
 </html>
