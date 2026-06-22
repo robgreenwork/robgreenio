@@ -331,9 +331,7 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (state === 'idle') {
-        // just draw the dot above the I
-        const o = getDotOrigin();
-        drawDot(o.x, o.y, BALL_R, 1);
+        // text "." is the dot — nothing drawn on canvas
 
       } else if (state === 'intro') {
         const elapsed  = now - introStart;
