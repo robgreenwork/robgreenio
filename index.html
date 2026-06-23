@@ -10,7 +10,7 @@
     html, body {
       height: 100%;
       overflow: hidden;
-      background: rgb(72, 77, 75);
+      background: hsl(148, 18%, 62%);
       font-family: Arial, sans-serif;
     }
 
@@ -25,7 +25,7 @@
     h1 {
       font-size: min(8vw, 14vh);
       font-weight: 400;
-      color: rgba(255,255,255,0.9);
+      color: rgba(0,0,0,0.75);
       letter-spacing: 0.05em;
       text-transform: uppercase;
       position: relative;
@@ -41,13 +41,13 @@
     }
 
     h1::before {
-      color: #a8e6cf;
+      color: #2d6a4f;
       animation: glitch1 6s infinite;
       clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
     }
 
     h1::after {
-      color: #ff6b6b;
+      color: #c0392b;
       animation: glitch2 6s infinite;
       clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
     }
@@ -123,7 +123,7 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 11;
-      color: rgba(255,255,255,0.3);
+      color: rgba(0,0,0,0.3);
       font-family: Arial, sans-serif;
       font-size: 14px;
       letter-spacing: 0.2em;
@@ -140,8 +140,8 @@
       transform: translateX(-50%);
       z-index: 11;
       background: transparent;
-      border: 1px solid rgba(255,255,255,0.35);
-      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(0,0,0,0.25);
+      color: rgba(0,0,0,0.6);
       font-family: Arial, sans-serif;
       font-size: 13px;
       letter-spacing: 0.15em;
@@ -160,29 +160,22 @@
     }
 
     #play-btn:hover {
-      border-color: rgba(255,255,255,0.8);
-      color: #fff;
+      border-color: rgba(0,0,0,0.6);
+      color: rgba(0,0,0,0.9);
     }
 
     #play-btn.active {
-      border-color: rgba(255,255,255,0.8);
-      color: #fff;
-      background: rgba(255,255,255,0.08);
+      border-color: rgba(0,0,0,0.6);
+      color: rgba(0,0,0,0.9);
+      background: rgba(0,0,0,0.08);
     }
 
-    /* Spotlight */
-    .spotlight {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 8;
-    }
   </style>
 </head>
 <body>
   <div class="grain"></div>
   <div class="scanlines"></div>
-  <div class="spotlight" id="spotlight"></div>
+
 
   <div class="scene">
     <h1 id="title" data-text="ROBGREEN.IO"><span id="text-inner"></span></h1>
@@ -200,14 +193,14 @@
     const score    = document.getElementById('score');
     const canvas   = document.getElementById('c');
     const ctx      = canvas.getContext('2d');
-    const spotlight = document.getElementById('spotlight');
-    const playBtn   = document.getElementById('play-btn');
+    const playBtn = document.getElementById('play-btn');
 
     let playerMode = false;
     let mouseY = 0;
 
     document.addEventListener('mousemove', e => { mouseY = e.clientY; });
     document.addEventListener('touchmove', e => { mouseY = e.touches[0].clientY; }, { passive: true });
+
 
     playBtn.addEventListener('click', () => {
       playerMode = !playerMode;
@@ -257,16 +250,11 @@
     let hue = 0;
     function shiftBg() {
       hue += 0.02;
-      const l = 28 + Math.sin(hue*0.5)*4;
-      document.body.style.background = `hsl(${148+Math.sin(hue)*6},${7+Math.sin(hue*0.7)*2}%,${l}%)`;
+      const l = 62 + Math.sin(hue*0.5)*4;
+      document.body.style.background = `hsl(${148+Math.sin(hue)*6},${18+Math.sin(hue*0.7)*3}%,${l}%)`;
       requestAnimationFrame(shiftBg);
     }
     shiftBg();
-
-    // ── Spotlight ────────────────────────────────────────────
-    document.addEventListener('mousemove', e => {
-      spotlight.style.background = `radial-gradient(circle 350px at ${e.clientX}px ${e.clientY}px, transparent 0%, rgba(40,44,42,0.7) 100%)`;
-    });
 
     // ── PONG ─────────────────────────────────────────────────
     const PADDLE_W = 10, PADDLE_H = 80, PAD_MARGIN = 48;
@@ -319,8 +307,8 @@
       ctx.globalAlpha = alpha;
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI*2);
-      ctx.fillStyle = '#fff';
-      ctx.shadowColor = '#fff';
+      ctx.fillStyle = 'rgba(0,0,0,0.75)';
+      ctx.shadowColor = 'rgba(0,0,0,0.3)';
       ctx.shadowBlur = 16;
       ctx.fill();
       ctx.restore();
@@ -329,8 +317,8 @@
     function drawPaddle(x, y, alpha) {
       ctx.save();
       ctx.globalAlpha = alpha;
-      ctx.fillStyle = '#fff';
-      ctx.shadowColor = '#fff';
+      ctx.fillStyle = 'rgba(0,0,0,0.75)';
+      ctx.shadowColor = 'rgba(0,0,0,0.2)';
       ctx.shadowBlur = 12;
       ctx.beginPath();
       ctx.roundRect(x, y, PADDLE_W, PADDLE_H, 5);
@@ -343,7 +331,7 @@
       ctx.save();
       ctx.globalAlpha = alpha * 0.15;
       ctx.setLineDash([12, 18]);
-      ctx.strokeStyle = '#fff';
+      ctx.strokeStyle = 'rgba(0,0,0,0.2)';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(canvas.width/2, 0);
