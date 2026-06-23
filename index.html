@@ -4,14 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>robgreen.io</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     html, body {
       height: 100%;
       overflow: hidden;
-      background: hsl(148, 18%, 62%);
-      font-family: Arial, sans-serif;
+      background: #F2D44A;
+      font-family: 'Anton', Arial, sans-serif;
     }
 
     .scene {
@@ -25,8 +26,8 @@
     h1 {
       font-size: min(8vw, 14vh);
       font-weight: 400;
-      color: rgba(0,0,0,0.75);
-      letter-spacing: 0.05em;
+      color: #1B57A8;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       position: relative;
       cursor: default;
@@ -41,13 +42,13 @@
     }
 
     h1::before {
-      color: #2d6a4f;
+      color: #E8541A;
       animation: glitch1 6s infinite;
       clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
     }
 
     h1::after {
-      color: #c0392b;
+      color: #1B57A8;
       animation: glitch2 6s infinite;
       clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
     }
@@ -123,7 +124,7 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 11;
-      color: rgba(0,0,0,0.3);
+      color: #1B57A8;
       font-family: Arial, sans-serif;
       font-size: 14px;
       letter-spacing: 0.2em;
@@ -140,8 +141,8 @@
       transform: translateX(-50%);
       z-index: 11;
       background: transparent;
-      border: 1px solid rgba(0,0,0,0.25);
-      color: rgba(0,0,0,0.6);
+      border: 2px solid #1B57A8;
+      color: #1B57A8;
       font-family: Arial, sans-serif;
       font-size: 13px;
       letter-spacing: 0.15em;
@@ -160,14 +161,14 @@
     }
 
     #play-btn:hover {
-      border-color: rgba(0,0,0,0.6);
-      color: rgba(0,0,0,0.9);
+      border-color: #E8541A;
+      color: #E8541A;
     }
 
     #play-btn.active {
-      border-color: rgba(0,0,0,0.6);
-      color: rgba(0,0,0,0.9);
-      background: rgba(0,0,0,0.08);
+      border-color: #E8541A;
+      color: #E8541A;
+      background: rgba(232,84,26,0.08);
     }
 
   </style>
@@ -250,8 +251,9 @@
     let hue = 0;
     function shiftBg() {
       hue += 0.02;
-      const l = 62 + Math.sin(hue*0.5)*4;
-      document.body.style.background = `hsl(${148+Math.sin(hue)*6},${18+Math.sin(hue*0.7)*3}%,${l}%)`;
+      const s = 85 + Math.sin(hue*0.7)*5;
+      const l = 60 + Math.sin(hue*0.5)*4;
+      document.body.style.background = `hsl(${48+Math.sin(hue)*4},${s}%,${l}%)`;
       requestAnimationFrame(shiftBg);
     }
     shiftBg();
@@ -307,8 +309,8 @@
       ctx.globalAlpha = alpha;
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(0,0,0,0.75)';
-      ctx.shadowColor = 'rgba(0,0,0,0.3)';
+      ctx.fillStyle = '#E8541A';
+      ctx.shadowColor = '#E8541A';
       ctx.shadowBlur = 16;
       ctx.fill();
       ctx.restore();
@@ -317,8 +319,8 @@
     function drawPaddle(x, y, alpha) {
       ctx.save();
       ctx.globalAlpha = alpha;
-      ctx.fillStyle = 'rgba(0,0,0,0.75)';
-      ctx.shadowColor = 'rgba(0,0,0,0.2)';
+      ctx.fillStyle = '#1B57A8';
+      ctx.shadowColor = '#1B57A8';
       ctx.shadowBlur = 12;
       ctx.beginPath();
       ctx.roundRect(x, y, PADDLE_W, PADDLE_H, 5);
@@ -331,7 +333,7 @@
       ctx.save();
       ctx.globalAlpha = alpha * 0.15;
       ctx.setLineDash([12, 18]);
-      ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+      ctx.strokeStyle = '#1B57A8';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(canvas.width/2, 0);
