@@ -133,6 +133,43 @@
 
     #score.visible { opacity: 1; }
 
+    #play-btn {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 11;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.7);
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      padding: 10px 24px;
+      border-radius: 100px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.6s, border-color 0.2s, color 0.2s;
+      pointer-events: none;
+      text-transform: uppercase;
+    }
+
+    #play-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #play-btn:hover {
+      border-color: rgba(255,255,255,0.8);
+      color: #fff;
+    }
+
+    #play-btn.active {
+      border-color: rgba(255,255,255,0.8);
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+
     /* Spotlight */
     .spotlight {
       position: fixed;
@@ -152,6 +189,7 @@
   </div>
 
 <div id="score"></div>
+  <button id="play-btn">Wanna play?</button>
   <canvas id="c"></canvas>
 
   <script>
@@ -163,6 +201,19 @@
     const canvas   = document.getElementById('c');
     const ctx      = canvas.getContext('2d');
     const spotlight = document.getElementById('spotlight');
+    const playBtn   = document.getElementById('play-btn');
+
+    let playerMode = false;
+    let mouseY = 0;
+
+    document.addEventListener('mousemove', e => { mouseY = e.clientY; });
+    document.addEventListener('touchmove', e => { mouseY = e.touches[0].clientY; }, { passive: true });
+
+    playBtn.addEventListener('click', () => {
+      playerMode = !playerMode;
+      playBtn.classList.toggle('active', playerMode);
+      playBtn.textContent = playerMode ? 'You\'re playing!' : 'Wanna play?';
+    });
 
     // Build char spans
     const spans = ORIGINAL.split('').map(c => {
@@ -351,6 +402,7 @@
         if (progress >= 1) {
           score.classList.add('visible');
           score.textContent = `${sL}  ·  ${sR}`;
+          playBtn.classList.add('visible');
           gameAlpha = 1;
           state = 'launching';
           setTimeout(() => {
@@ -408,9 +460,13 @@
         if (ball.x < 0)              resetBall('R');
         if (ball.x > canvas.width)   resetBall('L');
 
-        // AI
-        aiPaddle(padL, ball.vy > 0 || ball.vx < 0 ? ball.y : canvas.height/2);
-        aiPaddle(padR, ball.vy > 0 || ball.vx > 0 ? ball.y : canvas.height/2);
+        // AI / player
+        aiPaddle(padL, ball.vx < 0 ? ball.y : canvas.height/2);
+        if (playerMode) {
+          padR.y = Math.max(0, Math.min(canvas.height - PADDLE_H, mouseY - PADDLE_H / 2));
+        } else {
+          aiPaddle(padR, ball.vx > 0 ? ball.y : canvas.height/2);
+        }
 
         drawCentreLine(1);
         drawPaddle(lx, padL.y, 1);
